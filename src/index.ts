@@ -1,6 +1,6 @@
-import { getRange, type MinMaxRange } from "./utils/get-range";
 import { calibrateSchema } from "./utils/calibrate-schema";
 import { cleanSchema } from "./utils/clean-schema";
+import { getRange, type MinMaxRange } from "./utils/get-range";
 
 export type PaginationConfig = {
   total: number;
@@ -34,7 +34,7 @@ const generate = ({
 
   const minPages = siblingCount * 2 + boundaryCount * 2 + 3;
 
-  if (totalPages <= minPages)
+  if (totalPages <= minPages || totalPages <= 7)
     return Array.from({ length: totalPages }, (_, index) => index + 1);
 
   const minMax: MinMaxRange = [1, totalPages];
