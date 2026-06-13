@@ -34,7 +34,7 @@ const generate = ({
 
   const minPages = siblingCount * 2 + boundaryCount * 2 + 3;
 
-  if (totalPages <= minPages || totalPages <= 7)
+  if (totalPages <= minPages || totalPages <= 6)
     return Array.from({ length: totalPages }, (_, index) => index + 1);
 
   const minMax: MinMaxRange = [1, totalPages];
