@@ -58,7 +58,7 @@ const pages = generate({
   currentPage: 15,
 });
 
-// [1,0,14,15,16,0,23]
+// [1 ,0 ,14 ,15 ,16 ,0 ,23]
 ```
 
 The rendered pagination should have the following structure:
@@ -85,15 +85,14 @@ const config: PaginationConfig;
 
 ## API Reference 📃
 
-| Item                    | Description                                                                               | Type                                     |
-| ----------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `generate`              | The helper function to make the pagination structure                                      | `(config: PaginationConfig) => number[]` |
-| `config.total`          | The total numbers of items in your database                                               | `number`                                 |
-| `config.perPage`        | The number of items showed per page                                                       | `number`                                 |
-| `config.currentPage`    | The current page in your pagination                                                       | `number`                                 |
-| `config?.siblingCount`  | How many pages on either side of current page                                             | `number` (default 1)                     |
-| `config?.boundaryCount` | How many pages to the ends of pagination                                                  | `number` (default 0)                     |
-| `config?.autoCalibrate` | Calibrate output array to have always the same length (usefully to prevent UI flickering) | `boolean` (default true)                 |
+| Item                    | Description                                          | Type                                     |
+| ----------------------- | ---------------------------------------------------- | ---------------------------------------- |
+| `generate`              | The helper function to make the pagination structure | `(config: PaginationConfig) => number[]` |
+| `config.total`          | The total numbers of items in your database          | `number`                                 |
+| `config.perPage`        | The number of items showed per page                  | `number`                                 |
+| `config.currentPage`    | The current page in your pagination                  | `number`                                 |
+| `config?.siblingCount`  | How many pages on either side of current page        | `number` (default 1)                     |
+| `config?.boundaryCount` | How many pages to the ends of pagination             | `number` (default 1)                     |
 
 ## Examples ✔
 

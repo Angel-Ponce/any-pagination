@@ -1,6 +1,5 @@
-import { calibrateSchema } from "./utils/calibrate-schema";
-import { cleanSchema } from "./utils/clean-schema";
-import { getRange, type MinMaxRange } from "./utils/get-range";
+const getRange = (start: number, end: number) =>
+  Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
 export type PaginationConfig = {
   total: number;
@@ -8,15 +7,13 @@ export type PaginationConfig = {
   currentPage: number;
   siblingCount?: number;
   boundaryCount?: number;
-  autoCalibrate?: boolean;
 };
 
 const isInvalid = (n: number) => Number.isNaN(n) || n < 0;
 
 const generate = ({
   siblingCount = 1,
-  boundaryCount = 0,
-  autoCalibrate = true,
+  boundaryCount = 1,
   ...config
 }: PaginationConfig) => {
   if (
@@ -32,34 +29,48 @@ const generate = ({
 
   const totalPages = Math.ceil(config.total / config.perPage);
 
-  const minPages = siblingCount * 2 + boundaryCount * 2 + 3;
+  const startPages = getRange(1, Math.min(boundaryCount, totalPages));
+  const endPages = getRange(
+    Math.max(totalPages - boundaryCount + 1, boundaryCount + 1),
+    totalPages,
+  );
 
-  if (totalPages <= minPages || totalPages <= 6)
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  const siblingsStart = Math.max(
+    Math.min(
+      config.currentPage - siblingCount,
+      totalPages - boundaryCount - siblingCount * 2 - 1,
+    ),
+    boundaryCount + 2,
+  );
 
-  const minMax: MinMaxRange = [1, totalPages];
+  const siblingsEnd = Math.min(
+    Math.max(
+      config.currentPage + siblingCount,
+      boundaryCount + siblingCount * 2 + 2,
+    ),
+    totalPages - boundaryCount - 1,
+  );
 
-  const startRange = getRange(1, boundaryCount, minMax);
+  const schema = [
+    ...startPages,
+    ...(siblingsStart > boundaryCount + 2
+      ? [0]
+      : boundaryCount + 1 < totalPages - boundaryCount
+        ? [boundaryCount + 1]
+        : []),
 
-  const endRange = getRange(totalPages - boundaryCount, boundaryCount, minMax);
+    ...getRange(siblingsStart, siblingsEnd),
 
-  const middleRange = getRange(
-    config.currentPage - siblingCount,
-    siblingCount * 2,
-    minMax,
-  ).filter((value) => !startRange.includes(value) && !endRange.includes(value));
+    ...(siblingsEnd < totalPages - boundaryCount - 1
+      ? [0]
+      : totalPages - boundaryCount > boundaryCount
+        ? [totalPages - boundaryCount]
+        : []),
 
-  const schema = cleanSchema([
-    ...startRange,
-    0,
-    ...middleRange,
-    0,
-    ...endRange,
-  ]);
+    ...endPages,
+  ];
 
-  return autoCalibrate
-    ? calibrateSchema(schema, config.currentPage, minPages)
-    : schema;
+  return schema;
 };
 
 export default generate;
